@@ -3,10 +3,12 @@
 def iterate(board, rows, cols):
     for r in range(0, rows):
         for c in range(0, cols):
+            if board[r][c] == ".":
+                continue
             numAdjacent = numSurrounding(board, rows, cols, r, c)
             if board[r][c] == "L" and numAdjacent == 0:
                 board[r][c] = "l"
-            elif board[r][c] == "#" and numAdjacent >= 4:
+            elif board[r][c] == "#" and numAdjacent >= 5:
                 board[r][c] = "3"
 
     result = ""
@@ -25,31 +27,40 @@ def iterate(board, rows, cols):
 
 def numSurrounding(board, rows, cols, r, c):
     num = 0
-    cols -= 1
-    rows -= 1
 
-    if r > 0 and c > 0 and (board[r-1][c-1] == "#" or board[r-1][c-1] == "3"):
+    if occupiedInDirection(board, rows, cols, r-1, c-1, -1, -1):
         num += 1
-    if r > 0 and (board[r-1][c] == "#" or board[r-1][c] == "3"):
+    if occupiedInDirection(board, rows, cols, r-1, c, -1, 0):
         num += 1
-    if r > 0 and c < cols and (board[r-1][c+1] == "#" or board[r-1][c+1] == "3"):
-        num += 1
-    
-    if c > 0 and (board[r][c-1] == "#" or board[r][c-1] == "3"):
-        num += 1
-    if c < cols and (board[r][c+1] == "#" or board[r][c+1] == "3"):
+    if occupiedInDirection(board, rows, cols, r-1, c+1, -1, 1):
         num += 1
 
-    if r < rows and c > 0 and (board[r+1][c-1] == "#" or board[r+1][c-1] == "3"):
+    if occupiedInDirection(board, rows, cols, r, c-1, 0, -1):
         num += 1
-    if r < rows and (board[r+1][c] == "#" or board[r+1][c] == "3"):
+    if occupiedInDirection(board, rows, cols, r, c+1, 0, 1):
         num += 1
-    if r < rows and c < cols and (board[r+1][c+1] == "#" or board[r+1][c+1] == "3"):
+
+    if occupiedInDirection(board, rows, cols, r+1, c-1, 1, -1):
+        num += 1
+    if occupiedInDirection(board, rows, cols, r+1, c, 1, 0):
+        num += 1
+    if occupiedInDirection(board, rows, cols, r+1, c+1, 1, 1):
         num += 1
 
     #print(r, c, num)
 
     return num
+
+def occupiedInDirection(board, rows, cols, r, c, incR, incC):
+    while r >= 0 and c >= 0 and r < rows and c < cols:
+        if board[r][c] == "#" or board[r][c] == "3":
+            return True
+        if board[r][c] == "L" or board[r][c] == "l":
+            return False
+        r += incR
+        c += incC
+
+    return False
 
 filename = "11.input"
 rd = open(filename, "r")
